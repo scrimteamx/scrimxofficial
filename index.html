@@ -1,293 +1,1185 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScrimX Pro</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Soul Launcher - The Ultimate Minecraft 1.8.9 Client</title>
+    <link rel="icon" href="SoulClient.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Base Light Theme Colors */
         :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2d2d2d;
-            --text-primary: #ffffff;
-            --accent: #ff4655;
+            --bg-primary: #e0f7fa;
+            /* Light Aqua background */
+            --bg-secondary: #f0f8ff;
+            /* Slightly lighter for sections */
+            --bg-card: #ffffff;
+            /* White for cards */
+            --text-primary: #000000;
+            /* Black text */
+            --text-secondary: #1e293b;
+            /* Darker gray for general text */
+            --text-light: #475569;
+            /* Lighter gray for subtle text */
+            --nav-bg: rgba(255, 255, 255, 0.8);
+            /* White translucent nav */
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            /* Light shadow */
+            --border-color: rgba(0, 188, 212, 0.2);
+            /* Light aqua border */
+            --gradient-start: #00bcd4;
+            /* Aqua */
+            --gradient-end: #0097a7;
+            /* Darker Aqua */
+            --footer-bg: #e0f7fa;
+            /* Light aqua for footer */
+            --footer-text: #475569;
+            /* Darker gray for footer text */
+            --modal-bg: #ffffff;
+            /* White modal */
+            --modal-text: #1e293b;
+            /* Dark modal text */
         }
 
-        [data-theme="light"] {
-            --bg-primary: #f5f5f5;
-            --bg-secondary: #ffffff;
-            --text-primary: #1a1a1a;
+        /* Dark Mode Colors */
+        body[data-theme='dark'] {
+            --bg-primary: #1a202c;
+            /* Dark background */
+            --bg-secondary: #2d3748;
+            /* Slightly lighter for sections */
+            --bg-card: #4a5568;
+            /* Darker for cards */
+            --text-primary: #e2e8f0;
+            /* Light text */
+            --text-secondary: #cbd5e1;
+            /* Lighter gray for general text */
+            --text-light: #a0aec0;
+            /* Even lighter gray for subtle text */
+            --nav-bg: rgba(26, 32, 44, 0.8);
+            /* Dark translucent nav */
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            /* Darker shadow */
+            --border-color: rgba(139, 92, 246, 0.2);
+            /* Light purple border */
+            --gradient-start: #8b5cf6;
+            /* Purple */
+            --gradient-end: #ec4899;
+            /* Pink */
+            --footer-bg: #1a202c;
+            /* Dark for footer */
+            --footer-text: #a0aec0;
+            /* Light gray for footer text */
+            --modal-bg: #2d3748;
+            /* Dark modal */
+            --modal-text: #e2e8f0;
+            /* Light modal text */
         }
 
         body {
-            margin: 0;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
-            transition: all 0.3s ease;
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            /* Smooth theme transition */
         }
 
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(90deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-            padding: 1rem 2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        .gradient-text {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .nav-button {
-            background: none;
-            border: none;
+        .btn-primary {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px 0 var(--shadow-color);
+        }
+
+        .section-heading {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 2.5rem;
+            font-weight: 600;
             color: var(--text-primary);
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
 
-        .nav-button:hover {
-            background: var(--accent);
+        .section-heading::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -12px;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            border-radius: 9999px;
+            opacity: 0.8;
+        }
+
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gradient-start);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gradient-end);
+        }
+
+        /* Keyframe animations for subtle effects */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+            opacity: 0;
+            /* Hidden by default */
+        }
+
+        .animate-fade-in-delay-100 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-fade-in-delay-200 {
+            animation-delay: 0.2s;
+        }
+
+        /* Card hover effect */
+        .card-hover-effect {
+            transition: all 0.3s ease-in-out;
+            background-color: var(--bg-card);
+            color: var(--text-secondary);
+        }
+
+        .card-hover-effect:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 10px 25px var(--shadow-color);
+        }
+
+        /* Loader specific styles and animations */
+        @keyframes loaderFadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .loader-image-fade-in {
+            animation: loaderFadeIn 1.0s ease-in-out forwards;
+            /* Logo fades in */
+        }
+
+        /* Navigation Bar */
+        nav {
+            background-color: var(--nav-bg);
+            color: var(--text-primary);
+        }
+
+        nav a {
+            color: var(--text-primary);
+        }
+
+        nav a:hover {
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
+        }
+
+        /* Modal */
+        #download-modal div {
+            background-color: var(--modal-bg);
+            color: var(--modal-text);
+        }
+
+        #close-modal-button {
+            color: var(--text-light);
+            transition: color 0.3s ease;
+            /* Smooth transition for close button */
+        }
+
+        #close-modal-button:hover {
+            color: var(--text-primary);
+        }
+
+        /* Cosmetics Tab Styles */
+        .tab-button {
+            background-color: var(--bg-card);
+            color: var(--text-secondary);
+            transition: all 0.2s ease-in-out;
+            border: 1px solid var(--border-color);
+        }
+
+        .tab-button:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
             transform: translateY(-2px);
         }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--accent);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .video-container {
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-        }
-
-        video {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .news-card {
-            background: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 12px;
-            transition: transform 0.3s ease;
-        }
-
-        .news-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--accent);
-            padding: 1rem;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .section-title {
-            font-size: 2rem;
-            margin: 2rem 0;
-            color: var(--accent);
-            border-left: 4px solid var(--accent);
-            padding-left: 1rem;
-        }
-
-        .tournaments-grid {
-            display: grid;
-            gap: 1.5rem;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            margin-top: 2rem;
-        }
-
-        .tournament-card {
-            display: flex;
-            background: var(--bg-secondary);
-            border-radius: 12px;
-            padding: 1rem;
-            gap: 1rem;
-            align-items: center;
-            transition: transform 0.3s ease;
-        }
-
-        .tournament-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .tournament-artwork {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        .tournament-details {
-            flex: 1;
-        }
-
-        .tournament-date {
-            font-size: 0.9rem;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-        }
-
-        .tournament-title {
-            margin: 0;
-            font-size: 1.1rem;
-        }
-
-        .tournament-description {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin: 0.5rem 0;
-        }
-
-        .register-button {
-            background: var(--accent);
+        .tab-button.active {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
             color: white;
-            border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transform: translateY(-2px);
         }
 
-        .register-button:hover {
-            opacity: 0.9;
-            transform: scale(1.05);
+        /* Login Tab Styles */
+        .login-tab-button {
+            background-color: var(--bg-card);
+            color: var(--text-secondary);
+            transition: all 0.2s ease-in-out;
+            border: 1px solid var(--border-color);
         }
 
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem;
-            }
-            
-            .nav-button span {
-                display: none;
-            }
+        .login-tab-button:hover {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+        }
+
+        .login-tab-button.active {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            color: white;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            transform: translateY(-2px);
+        }
+
+        /* Premium Section Specific Styles */
+        .premium-section {
+            border: 2px solid var(--gradient-start);
+            /* Fancy border */
+            padding: 2.5rem;
+            /* More padding */
+            box-shadow: 0 15px 30px var(--shadow-color);
+            /* More prominent shadow */
+        }
+
+        /* Cracked Section Specific Styles */
+        .cracked-section {
+            background-color: var(--bg-secondary);
+            /* Simpler background */
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            /* Lighter shadow */
         }
     </style>
+
+    <script src="https://alcdn.msauth.net/lib/1.4.17/msal.min.js"></script>
 </head>
-<body>
-    <div class="navbar">
-        <button class="nav-button" onclick="window.location.href='https://scrimteamx.github.io/scrimadmin/'">
-            <i class="fas fa-trophy"></i>
-            <span>Leaderboard</span>
-        </button>
-        <div class="logo">
-            <i class="fas fa-gamepad"></i> ScrimX
-        </div>
-        <button class="nav-button" onclick="window.location.href='https://scrimteamx.github.io/scrimx/'">
-            <i class="fas fa-user-plus"></i>
-            <span>Register</span>
-        </button>
+
+<body class="antialiased" data-theme="light">
+
+    <div id="loader"
+        class="fixed inset-0 bg-white flex items-center justify-center z-[9999] transition-opacity duration-700 ease-out opacity-100">
+        <img src="Soulwithtext.png" alt="Soul Launcher Loading" class="h-48 w-auto loader-image-fade-in">
     </div>
 
-    <div class="container">
-        <div class="video-container">
-            <video autoplay loop muted playsinline>
-                <source src="scrimxfest.mp4" type="video/mp4">
+    <nav class="fixed w-full z-50 shadow-xl rounded-b-xl">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <img src="SoulClient.png" alt="Soul Launcher Logo" class="h-10 w-auto rounded-full shadow-md">
+                <a href="#" class="text-3xl font-extrabold gradient-text tracking-tight">Soul Launcher</a>
+            </div>
+            <div class="hidden md:flex space-x-7 items-center">
+                <a href="#home"
+                    class="hover:text-gray-700 transition duration-300 rounded-md px-3 py-2 text-lg font-medium nav-link">Home</a>
+                <a href="#features"
+                    class="hover:text-gray-700 transition duration-300 rounded-md px-3 py-2 text-lg font-medium nav-link">Features</a>
+                <a href="#cosmetics"
+                    class="hover:text-gray-700 transition duration-300 rounded-md px-3 py-2 text-lg font-medium nav-link">Cosmetics</a>
+                <a href="#login"
+                    class="btn-primary text-white px-7 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 text-lg nav-link flex items-center space-x-2">
+                    <i class="fas fa-user"></i><span>Login</span>
+                </a>
+                <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer"
+                    class="btn-primary text-white px-7 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 text-lg flex items-center space-x-2">
+                    <i class="fab fa-discord"></i><span>Discord</span>
+                </a>
+                <a href="#"
+                    class="btn-primary text-white px-7 py-2.5 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 text-lg"
+                    id="nav-download-button">Download</a>
+                <button id="theme-toggle"
+                    class="ml-4 p-2 rounded-full focus:outline-none transition-colors duration-300 bg-gray-200 hover:bg-gray-300 text-gray-700">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+            </div>
+            <button id="mobile-menu-button"
+                class="md:hidden focus:outline-none p-2 rounded-md hover:bg-gray-100 transition duration-300">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-white bg-opacity-90 rounded-b-lg py-3">
+            <a href="#home" class="block hover:bg-gray-100 px-6 py-3 rounded-md text-lg nav-link">Home</a>
+            <a href="#features" class="block hover:bg-gray-100 px-6 py-3 rounded-md text-lg nav-link">Features</a>
+            <a href="#cosmetics" class="block hover:bg-gray-100 px-6 py-3 rounded-md text-lg nav-link">Cosmetics</a>
+            <a href="#login"
+                class="block btn-primary text-white px-6 py-3 rounded-md mt-3 mx-4 text-center text-lg nav-link flex items-center space-x-2">
+                <i class="fas fa-user"></i><span>Login</span>
+            </a>
+            <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer"
+                class="block btn-primary text-white px-6 py-3 rounded-md mt-3 mx-4 text-center text-lg flex items-center space-x-2">
+                <i class="fab fa-discord"></i><span>Discord</span>
+            </a>
+            <a href="#" class="block btn-primary text-white px-6 py-3 rounded-md mt-3 mx-4 text-center text-lg"
+                id="mobile-nav-download-button">Download</a>
+            <button id="mobile-theme-toggle"
+                class="w-full text-left px-6 py-3 rounded-md mt-2 focus:outline-none transition-colors duration-300 bg-gray-200 hover:bg-gray-300 text-gray-700">
+                <i class="fas fa-moon mr-2"></i> Toggle Theme
+            </button>
+        </div>
+    </nav>
+
+    <div id="main-content">
+        <section id="home" class="relative h-screen flex items-center justify-center overflow-hidden page-section">
+            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover">
+                <source src="mistbg.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
-        </div>
+            <div class="absolute inset-0 bg-black opacity-40"></div>
+            <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
+                <h1 class="text-6xl md:text-8xl font-extrabold leading-tight gradient-text mb-6 animate-fade-in">
+                    Soul Launcher
+                </h1>
+                <p class="text-xl md:text-3xl text-white mb-10 max-w-3xl mx-auto animate-fade-in animate-fade-in-delay-100">
+                    Elevate your Minecraft 1.8.9 gameplay with unparalleled performance, exclusive cosmetics, and
+                    essential enhancements.
+                </p>
+                <button id="download-button"
+                    class="btn-primary text-white text-xl md:text-2xl px-12 py-5 rounded-full font-bold shadow-xl hover:shadow-2xl animate-fade-in animate-fade-in-delay-200">
+                    Download Now
+                </button>
+            </div>
+        </section>
 
-        <h2 class="section-title">Latest News</h2>
-        <div class="news-grid">
-            <div class="news-card">
-                <h3><i class="fas fa-certificate"></i> New Tournament Announced</h3>
-                <p class="meta">Feb 15, 2024</p>
-                <p>Join our biggest fest yet with various games and a big prize pool!</p>
-                <a href="#" class="read-more">Read More →</a>
-            </div>
-            <div class="news-card">
-                <h3><i class="fas fa-users"></i> Team Recruitment Open</h3>
-                <p class="meta">Feb 14, 2025 • Community</p>
-                <p>Looking for professional players to join our sponsored teams.</p>
-                <a href="#" class="read-more">Read More →</a>
-            </div>
-            <div class="news-card">
-                <h3><i class="fas fa-wrench"></i> Server Maintenance</h3>
-                <p class="meta">Feb 14, 2025 • Updates</p>
-                <p>Monthly Maintenance.</p>
-                <a href="#" class="read-more">Read More →</a>
-            </div>
-        </div>
-
-        <h2 class="section-title">Upcoming Tournaments</h2>
-        <div class="tournaments-grid">
-            <div class="tournament-card">
-                <img src="ff-icon.jpg" alt="Valorant Championship" class="tournament-artwork">
-                <div class="tournament-details">
-                    <div class="tournament-date">FEB 19th, 2025</div>
-                    <h3 class="tournament-title">Crazy Fest | Free Fire</h3>
-                    <p class="tournament-description">16 Teams • Online Qualifiers</p>
-                    <button class="register-button" onclick="window.location.href='https://scrimteamx.github.io/scrimx/'">Register Now</button>
+        <section id="features" class="py-24 page-section hidden" style="background-color: var(--bg-secondary);">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-5xl font-bold section-heading mx-auto mb-16 animate-fade-in">Key Features
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    <div class="p-8 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-100">
+                        <div class="text-6xl text-purple-600 mb-5">✨</div>
+                        <h3 class="text-2xl font-semibold mb-3" style="color: var(--text-primary);">Cosmetic
+                            Customization</h3>
+                        <p class="leading-relaxed" style="color: var(--text-secondary);">Personalize your look with
+                            unique capes, wings, and hats to stand out in-game, expressing your true style.</p>
+                    </div>
+                    <div class="p-8 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-200">
+                        <div class="text-6xl text-blue-600 mb-5">⚡</div>
+                        <h3 class="text-2xl font-semibold mb-3" style="color: var(--text-primary);">Performance
+                            Optimization</h3>
+                        <p class="leading-relaxed" style="color: var(--text-secondary);">Experience buttery-smooth
+                            gameplay with significant FPS boosts and minimized lag, even on modest hardware.</p>
+                    </div>
+                    <div class="p-8 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                        <div class="text-6xl text-green-600 mb-5">🛡️</div>
+                        <h3 class="text-2xl font-semibold mb-3" style="color: var(--text-primary);">Essential Mods &
+                            Utilities</h3>
+                        <p class="leading-relaxed" style="color: var(--text-secondary);">Access a curated suite of
+                            powerful mods like Keystrokes, CPS Display, and more, seamlessly integrated for convenience.
+                        </p>
+                    </div>
+                    <div class="p-8 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                        <div class="text-6xl text-red-600 mb-5">🔒</div>
+                        <h3 class="text-2xl font-semibold mb-3" style="color: var(--text-primary);">Secure & Anti-Cheat
+                            Friendly</h3>
+                        <p class="leading-relaxed" style="color: var(--text-secondary);">Play with confidence on your
+                            favorite servers, knowing Soul Launcher is designed to be fully compatible and undetectable
+                            by anti-cheat systems.</p>
+                    </div>
+                    <div class="p-8 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-500">
+                        <div class="text-6xl text-yellow-600 mb-5">🔄</div>
+                        <h3 class="text-2xl font-semibold mb-3" style="color: var(--text-primary);">Consistent Updates
+                        </h3>
+                        <p class="leading-relaxed" style="color: var(--text-secondary);">Stay at the forefront with
+                            regular updates, bringing you new features, crucial bug fixes, and continuous performance
+                            enhancements.</p>
+                    </div>
+                    <div class="p-8 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-600">
+                        <div class="text-6xl text-indigo-600 mb-5">🎮</div>
+                        <h3 class="text-2xl font-semibold mb-3" style="color: var(--text-primary);">Intuitive
+                            Integration</h3>
+                        <p class="leading-relaxed" style="color: var(--text-secondary);">Effortlessly launch and dive
+                            into Minecraft 1.8.9 with Soul Launcher's user-friendly launcher and seamless setup process.
+                        </p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="tournament-card">
-                <img src="pubg-icon.jpg" alt="CS2 Showdown" class="tournament-artwork">
-                <div class="tournament-details">
-                    <div class="tournament-date">FEB 22nd, 2025</div>
-                    <h3 class="tournament-title">Crazy Fest | PUBG</h3>
-                    <p class="tournament-description">Open Qualifiers • Pro Teams Welcome</p>
-                    <button class="register-button" onclick="window.location.href='https://scrimteamx.github.io/scrimx/'">Register Now</button>
+        <section id="cosmetics" class="py-24 page-section hidden" style="background-color: var(--bg-primary);">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-5xl font-bold section-heading mx-auto mb-16 animate-fade-in">Express
+                    Yourself with Cosmetics</h2>
+                <p class="text-xl mb-14 max-w-3xl mx-auto leading-relaxed animate-fade-in animate-fade-in-delay-100"
+                    style="color: var(--text-secondary);">
+                    Soul Launcher offers a diverse collection of exclusive cosmetics, allowing you to truly personalize
+                    your in-game character. From elegant capes to dynamic wings and stylish hats, make a statement with
+                    every move.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-4 mb-12 animate-fade-in animate-fade-in-delay-200">
+                    <button class="tab-button px-6 py-3 rounded-full font-semibold text-lg active" data-category="cloaks">
+                        Cloaks
+                    </button>
+                    <button class="tab-button px-6 py-3 rounded-full font-semibold text-lg" data-category="emotes">
+                        Emotes
+                    </button>
+                    <button class="tab-button px-6 py-3 rounded-full font-semibold text-lg" data-category="pets">
+                        Pets
+                    </button>
+                    <button class="tab-button px-6 py-3 rounded-full font-semibold text-lg" data-category="wings">
+                        Wings
+                    </button>
+                    <button class="tab-button px-6 py-3 rounded-full font-semibold text-lg" data-category="suits">
+                        Suits
+                    </button>
+                    <button class="tab-button px-6 py-3 rounded-full font-semibold text-lg" data-category="auras">
+                        Auras
+                    </button>
+                </div>
+
+                <div id="cosmetics-content-container">
+                    <div id="cosmetics-cloaks-content"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cosmetic-category-content">
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Cape+1"
+                                alt="Cosmetic Cape 1" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Crimson Cape
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">A flowing cape with
+                                intricate crimson patterns.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Cape+2"
+                                alt="Cosmetic Cape 2" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Aqua Mist Cape
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Shimmering cape resembling
+                                a gentle mist.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-500">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Cape+3"
+                                alt="Cosmetic Cape 3" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Golden Sun Cape
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Radiant cape that glows
+                                like the setting sun.</p>
+                        </div>
+                    </div>
+
+                    <div id="cosmetics-emotes-content"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cosmetic-category-content hidden">
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Emote+1"
+                                alt="Cosmetic Emote 1" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Wave Emote</h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">A friendly wave to greet
+                                your friends.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Emote+2"
+                                alt="Cosmetic Emote 2" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Dab Emote</h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Show off your style with a
+                                quick dab.</p>
+                        </div>
+                    </div>
+
+                    <div id="cosmetics-pets-content"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cosmetic-category-content hidden">
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Pet+1"
+                                alt="Cosmetic Pet 1" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Mini Dragon
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">A loyal miniature dragon
+                                companion.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Pet+2"
+                                alt="Cosmetic Pet 2" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Floating Slime
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">A bouncy, adorable slime
+                                that follows you.</p>
+                        </div>
+                    </div>
+
+                    <div id="cosmetics-wings-content"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cosmetic-category-content hidden">
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Wings+1"
+                                alt="Cosmetic Wings 1" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Angel Wings
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Pure white wings for a
+                                heavenly look.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Wings+2"
+                                alt="Cosmetic Wings 2" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Dragonfly Wings
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Delicate, shimmering wings
+                                for agile movement.</p>
+                        </div>
+                    </div>
+
+                    <div id="cosmetics-suits-content"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cosmetic-category-content hidden">
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Suit+1"
+                                alt="Cosmetic Suit 1" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Astronaut Suit
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Explore the cosmos in this
+                                space-themed suit.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Suit+2"
+                                alt="Cosmetic Suit 2" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Diver Suit</h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Dive deep into adventures
+                                with this waterproof suit.</p>
+                        </div>
+                    </div>
+
+                    <div id="cosmetics-auras-content"
+                        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cosmetic-category-content hidden">
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-300">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Aura+1"
+                                alt="Cosmetic Aura 1" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Fiery Aura</h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Surround yourself with a
+                                vibrant, fiery glow.</p>
+                        </div>
+                        <div
+                            class="p-7 rounded-2xl shadow-xl card-hover-effect animate-fade-in animate-fade-in-delay-400">
+                            <img src="https://placehold.co/400x250/e0f7fa/000000?text=Cosmetic+Aura+2"
+                                alt="Cosmetic Aura 2" class="w-full h-auto rounded-lg mb-5 shadow-md">
+                            <h3 class="text-2xl font-semibold mb-2" style="color: var(--text-primary);">Frosty Aura
+                            </h3>
+                            <p class="leading-relaxed" style="color: var(--text-secondary);">Emit a cool, shimmering
+                                frosty effect.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="tournament-card">
-                <img src="ml-icon.jpg" alt="Apex Legends" class="tournament-artwork">
-                <div class="tournament-details">
-                    <div class="tournament-date">FEB 23rd, 2025</div>
-                    <h3 class="tournament-title">Crazy Fest | MLBB</h3>
-                    <p class="tournament-description">Competition | Finals</p>
-                    <button class="register-button" onclick="window.location.href='https://scrimteamx.github.io/scrimx/'">Register Now</button>
+        <section id="login" class="py-24 page-section hidden" style="background-color: var(--bg-secondary);">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-4xl md:text-5xl font-bold section-heading mx-auto mb-16 animate-fade-in">Login to Soul
+                    Launcher</h2>
+
+                <div class="flex flex-wrap justify-center gap-4 mb-12 animate-fade-in animate-fade-in-delay-100">
+                    <button class="login-tab-button px-6 py-3 rounded-full font-semibold text-lg active"
+                        data-login-type="premium">
+                        Premium Login
+                    </button>
+                    <button class="login-tab-button px-6 py-3 rounded-full font-semibold text-lg"
+                        data-login-type="cracked">
+                        Cracked Login
+                    </button>
+                </div>
+
+                <div id="login-content-container">
+                    <div id="login-premium-content"
+                        class="p-10 rounded-2xl shadow-xl max-w-xl mx-auto flex flex-col items-center card-hover-effect animate-fade-in animate-fade-in-delay-200 premium-section">
+                        <p class="text-xl mb-8 leading-relaxed" style="color: var(--text-secondary);">
+                            Securely log in with your Microsoft account to access exclusive features, synchronize
+                            cosmetics, and manage your Soul Launcher profile.
+                        </p>
+                        <button id="microsoft-login-button"
+                            class="btn-primary text-white text-xl px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 flex items-center space-x-3">
+                            <i class="fab fa-microsoft text-2xl"></i>
+                            <span>Login with Microsoft</span>
+                        </button>
+                        <div id="premium-login-status" class="mt-8 text-lg font-semibold"
+                            style="color: var(--text-primary);"></div>
+                        <button id="premium-logout-button"
+                            class="btn-primary text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 mt-4 hidden">
+                            Logout
+                        </button>
+                        <p class="text-sm text-gray-500 mt-6 leading-relaxed">
+                            Note: For a real Microsoft login, you need to register an application in Azure AD. Replace
+                            the placeholder `YOUR_CLIENT_ID` and `YOUR_TENANT_ID` in the script.
+                        </p>
+                    </div>
+
+                    <div id="login-cracked-content"
+                        class="p-10 rounded-2xl shadow-xl max-w-xl mx-auto flex flex-col items-center card-hover-effect animate-fade-in animate-fade-in-delay-200 cracked-section hidden">
+                        <p class="text-xl mb-8 leading-relaxed" style="color: var(--text-secondary);">
+                            Enter your desired username to play on cracked servers. No password required.
+                        </p>
+                        <input type="text" id="cracked-username-input" placeholder="Enter Username"
+                            class="w-full max-w-md px-5 py-3 rounded-lg border-2 border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-200 mb-6 text-lg"
+                            style="background-color: var(--bg-card); color: var(--text-primary);">
+                        <button id="cracked-login-button"
+                            class="btn-primary text-white text-xl px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300">
+                            Login with Username
+                        </button>
+                        <div id="cracked-login-status" class="mt-8 text-lg font-semibold"
+                            style="color: var(--text-primary);"></div>
+                        <button id="cracked-logout-button"
+                            class="btn-primary text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 mt-4 hidden">
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
-    <div class="theme-toggle" onclick="toggleTheme()">
-        <i class="fas fa-moon"></i>
+    <footer class="py-12 text-center rounded-t-xl"
+        style="background-color: var(--footer-bg); color: var(--footer-text);">
+        <div class="container mx-auto px-4">
+            <p class="text-lg">&copy; 2025 Soul Launcher. All rights reserved.</p>
+            <p class="mt-3 text-md">Minecraft is a trademark of Mojang Synergies AB.</p>
+        </div>
+    </footer>
+
+    <div id="download-modal"
+        class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden transition-opacity duration-300 ease-in-out opacity-0">
+        <div
+            class="p-10 rounded-2xl shadow-2xl max-w-lg w-full text-center relative transform scale-95 transition-all duration-300 ease-in-out"
+            style="background-color: var(--modal-bg); color: var(--modal-text);">
+            <button id="close-modal-button"
+                class="absolute top-5 right-5 text-3xl font-bold transition-colors duration-300">&times;</button>
+            <h3 class="text-4xl font-bold gradient-text mb-5">Download Soul Launcher</h3>
+            <p class="text-lg mb-8 leading-relaxed">
+                Thank you for your interest! The official download link will be available soon.
+                Stay connected with our community for the latest updates and release information!
+            </p>
+            <a href="https://discord.gg/your-discord-invite" target="_blank" rel="noopener noreferrer"
+                class="btn-primary text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition duration-300 text-lg">
+                Join our Discord for updates
+            </a>
+        </div>
     </div>
 
     <script>
-        function toggleTheme() {
-            const body = document.body;
-            const themeToggle = document.querySelector('.theme-toggle i');
-            
-            if (body.getAttribute('data-theme') === 'light') {
-                body.removeAttribute('data-theme');
-                themeToggle.classList.remove('fa-sun');
-                themeToggle.classList.add('fa-moon');
+        const DISCORD_INVITE_LINK = "https://discord.gg/your-discord-invite"; // Define Discord link once
+
+        // Function to show a specific section and hide others
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(section => {
+                if (section.id === sectionId) {
+                    section.classList.remove('hidden');
+                    // Re-trigger animations for the shown section
+                    section.querySelectorAll('.animate-fade-in').forEach(el => {
+                        el.style.opacity = '0'; // Reset opacity
+                        el.style.transform = 'translateY(20px)'; // Reset transform
+                        // Force reflow to restart animation
+                        void el.offsetWidth; // Trigger reflow
+                        el.style.opacity = '1'; // Set back to 1 for animation to run
+                        el.style.transform = 'translateY(0)';
+                    });
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+            // Update URL hash without causing a full page reload
+            history.pushState(null, '', '#' + sectionId);
+        }
+
+        // Handle initial load and hash changes
+        function handleHashChange() {
+            const hash = window.location.hash.substring(1); // Remove '#'
+            if (hash && document.getElementById(hash)) {
+                showSection(hash);
+                // If navigating to cosmetics, ensure the default tab is active
+                if (hash === 'cosmetics') {
+                    showCosmeticCategory('cloaks'); // Default to cloaks
+                }
+                // If navigating to login, ensure the default tab is active
+                if (hash === 'login') {
+                    showLoginType('premium'); // Default to premium login
+                }
             } else {
-                body.setAttribute('data-theme', 'light');
-                themeToggle.classList.remove('fa-moon');
-                themeToggle.classList.add('fa-sun');
+                showSection('home'); // Default to home if no hash or invalid hash
             }
         }
+
+        // Event listeners for navigation links
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1); // Get section ID
+                showSection(targetId);
+
+                // Close mobile menu if open
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (!mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Download Button (Hero Section)
+        const downloadButton = document.getElementById('download-button');
+        downloadButton.addEventListener('click', () => {
+            // Show the download modal instead of direct download
+            downloadModal.classList.remove('hidden');
+            setTimeout(() => {
+                downloadModal.style.opacity = '1';
+                downloadModal.querySelector('div').style.transform = 'scale(1)';
+            }, 10);
+        });
+
+        // Download Button (Nav Bar)
+        const navDownloadButton = document.getElementById('nav-download-button');
+        if (navDownloadButton) {
+            navDownloadButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                // Show the download modal instead of direct download
+                downloadModal.classList.remove('hidden');
+                setTimeout(() => {
+                    downloadModal.style.opacity = '1';
+                    downloadModal.querySelector('div').style.transform = 'scale(1)';
+                }, 10);
+            });
+        }
+
+        // Download Button (Mobile Nav Bar)
+        const mobileNavDownloadButton = document.getElementById('mobile-nav-download-button');
+        if (mobileNavDownloadButton) {
+            mobileNavDownloadButton.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                // Show the download modal instead of direct download
+                downloadModal.classList.remove('hidden');
+                setTimeout(() => {
+                    downloadModal.style.opacity = '1';
+                    downloadModal.querySelector('div').style.transform = 'scale(1)';
+                }, 10);
+            });
+        }
+
+
+        // Download Modal functionality
+        const downloadModal = document.getElementById('download-modal');
+        const closeModalButton = document.getElementById('close-modal-button');
+
+        closeModalButton.addEventListener('click', () => {
+            // Add fade-out and scale-down effect
+            downloadModal.style.opacity = '0';
+            downloadModal.querySelector('div').style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                downloadModal.classList.add('hidden');
+            }, 300); // Match transition duration
+        });
+
+        // Close modal when clicking outside
+        downloadModal.addEventListener('click', (e) => {
+            if (e.target === downloadModal) {
+                // Add fade-out and scale-down effect
+                downloadModal.style.opacity = '0';
+                downloadModal.querySelector('div').style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    downloadModal.classList.add('hidden');
+                }, 300); // Match transition duration
+            }
+        });
+
+        // Intersection Observer for scroll animations (only applies to the active section's content)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1 // Trigger when 10% of element is visible
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-active'); // Add a class to trigger animation
+                    entry.target.style.opacity = '1'; // Ensure it's visible after animation
+                    entry.target.style.transform = 'translateY(0)';
+                    observer.unobserve(entry.target); // Stop observing once animated
+                }
+            });
+        }, observerOptions);
+
+        // Loader functionality
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                const loaderImage = loader.querySelector('.loader-image-fade-in');
+                if (loaderImage) {
+                    loaderImage.style.opacity = '0'; // Ensure it's initially hidden for fade-in
+                }
+
+                // Start loader image fade-in
+                setTimeout(() => {
+                    if (loaderImage) {
+                        loaderImage.style.opacity = '1';
+                    }
+                }, 100); // Small delay before image starts fading in
+
+                // Loader container fades out after a longer delay
+                setTimeout(() => {
+                    loader.style.opacity = '0'; // Start fade out
+                    loader.addEventListener('transitionend', () => {
+                        loader.remove(); // Remove loader from DOM after transition completes
+                        // After loader is gone, initialize the SPA routing
+                        handleHashChange();
+                        // Observe elements in the initially visible section for animations
+                        document.querySelectorAll('.page-section:not(.hidden) .animate-fade-in').forEach(element => {
+                            observer.observe(element);
+                        });
+                    });
+                }, 1500); // Adjust this delay for how long the loader stays visible
+            }
+        });
+
+        // Listen for hash changes to navigate between "pages"
+        window.addEventListener('hashchange', handleHashChange);
+
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const mobileThemeToggleBtn = document.getElementById('mobile-theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                mobileThemeToggleBtn.innerHTML = '<i class="fas fa-sun mr-2"></i> Toggle Theme';
+            } else {
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                mobileThemeToggleBtn.innerHTML = '<i class="fas fa-moon mr-2"></i> Toggle Theme';
+            }
+            // Update text color for navigation links based on theme
+            document.querySelectorAll('.nav-link').forEach(link => {
+                if (theme === 'dark') {
+                    link.classList.remove('text-black', 'hover:text-gray-700');
+                    link.classList.add('text-gray-300', 'hover:text-white');
+                } else {
+                    link.classList.remove('text-gray-300', 'hover:text-white');
+                    link.classList.add('text-black', 'hover:text-gray-700');
+                }
+            });
+            // Update text color for mobile menu links
+            document.querySelectorAll('#mobile-menu a').forEach(link => {
+                // Only update non-button links
+                if (!link.classList.contains('btn-primary')) {
+                    if (theme === 'dark') {
+                        link.classList.remove('text-black', 'hover:bg-gray-100');
+                        link.classList.add('text-gray-300', 'hover:bg-gray-700');
+                    } else {
+                        link.classList.remove('text-gray-300', 'hover:bg-gray-700');
+                        link.classList.add('text-black', 'hover:bg-gray-100');
+                    }
+                }
+            });
+            // Update mobile theme toggle button colors
+            if (theme === 'dark') {
+                mobileThemeToggleBtn.classList.remove('bg-gray-200', 'hover:bg-gray-300', 'text-gray-700');
+                mobileThemeToggleBtn.classList.add('bg-gray-700', 'hover:bg-gray-600', 'text-gray-300');
+            } else {
+                mobileThemeToggleBtn.classList.remove('bg-gray-700', 'hover:bg-gray-600', 'text-gray-300');
+                mobileThemeToggleBtn.classList.add('bg-gray-200', 'hover:bg-gray-300', 'text-gray-700');
+            }
+            // Update mobile menu button colors
+            const mobileMenuSvg = mobileMenuButton.querySelector('svg');
+            if (theme === 'dark') {
+                mobileMenuSvg.classList.remove('text-black');
+                mobileMenuSvg.classList.add('text-gray-300');
+            } else {
+                mobileMenuSvg.classList.remove('text-gray-300');
+                mobileMenuSvg.classList.add('text-black');
+            }
+        }
+
+        // Initialize theme from localStorage or default to light
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+
+        themeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+        mobileThemeToggleBtn.addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+
+        // Cosmetics Tab Switching Logic
+        const cosmeticTabButtons = document.querySelectorAll('#cosmetics .tab-button');
+        const cosmeticCategoryContents = document.querySelectorAll('.cosmetic-category-content');
+
+        function showCosmeticCategory(category) {
+            cosmeticCategoryContents.forEach(content => {
+                if (content.id === `cosmetics-${category}-content`) {
+                    content.classList.remove('hidden');
+                    // Re-trigger animations for the shown category's content
+                    content.querySelectorAll('.animate-fade-in').forEach(el => {
+                        el.style.opacity = '0';
+                        el.style.transform = 'translateY(20px)';
+                        void el.offsetWidth;
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    });
+                } else {
+                    content.classList.add('hidden');
+                }
+            });
+
+            cosmeticTabButtons.forEach(button => {
+                if (button.dataset.category === category) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        cosmeticTabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showCosmeticCategory(button.dataset.category);
+            });
+        });
+
+        // Login Type Switching Logic
+        const loginTabButtons = document.querySelectorAll('#login .login-tab-button');
+        const loginContents = {
+            premium: document.getElementById('login-premium-content'),
+            cracked: document.getElementById('login-cracked-content')
+        };
+
+        function showLoginType(type) {
+            for (const key in loginContents) {
+                if (key === type) {
+                    loginContents[key].classList.remove('hidden');
+                    // Re-trigger animations for the shown login content
+                    loginContents[key].querySelectorAll('.animate-fade-in').forEach(el => {
+                        el.style.opacity = '0';
+                        el.style.transform = 'translateY(20px)';
+                        void el.offsetWidth;
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    });
+                } else {
+                    loginContents[key].classList.add('hidden');
+                }
+            }
+
+            loginTabButtons.forEach(button => {
+                if (button.dataset.loginType === type) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        loginTabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showLoginType(button.dataset.loginType);
+            });
+        });
+
+        // --- Microsoft Azure AD Login Logic (Premium) ---
+        const microsoftLoginButton = document.getElementById('microsoft-login-button');
+        const premiumLogoutButton = document.getElementById('premium-logout-button');
+        const premiumLoginStatus = document.getElementById('premium-login-status');
+
+        // MSAL Configuration
+        const msalConfig = {
+            auth: {
+                clientId: '92951a1f-8dd5-4ed9-ba01-bb3f5c3578e9', // IMPORTANT: Replace with your Azure AD Application (client) ID
+                authority: 'https://login.microsoftonline.com/d5ab5d57-42d6-4bbc-a889-f6c169058cec', // IMPORTANT: Replace with your Azure AD Directory (tenant) ID or 'common' for multi-tenant apps
+                redirectUri: window.location.origin, // IMPORTANT: This must match the Redirect URI configured in your Azure AD App Registration
+            },
+            cache: {
+                cacheLocation: 'localStorage', // Caches tokens in browser's local storage
+                storeAuthStateInCookie: false, // Set to true for IE 11, false for modern browsers
+            },
+        };
+
+        // Create a new MSAL PublicClientApplication object
+        const msalInstance = new Msal.PublicClientApplication(msalConfig);
+
+        // Request object for login and token acquisition
+        const loginRequest = {
+            scopes: ["user.read"] // Scope to read user's basic profile
+        };
+
+        /**
+         * Handles the login process using MSAL's loginPopup method.
+         * Displays user's name on successful login.
+         */
+        async function signIn() {
+            try {
+                // Attempt to login via popup
+                const loginResponse = await msalInstance.loginPopup(loginRequest);
+                console.log("Login successful:", loginResponse);
+                updatePremiumLoginUI(loginResponse.account);
+            } catch (error) {
+                console.error("Login failed:", error);
+                premiumLoginStatus.textContent = `Login failed: ${error.message}`;
+            }
+        }
+
+        /**
+         * Handles the logout process using MSAL's logout method.
+         */
+        function signOut() {
+            msalInstance.logout();
+            // MSAL's logout clears cache and redirects, so updatePremiumLoginUI will be called on reload.
+            // For immediate UI update without reload, manually set status:
+            premiumLoginStatus.textContent = 'Not logged in.';
+            microsoftLoginButton.classList.remove('hidden');
+            premiumLogoutButton.classList.add('hidden');
+        }
+
+        /**
+         * Updates the UI based on the current authentication status.
+         * @param {Object} account - The MSAL account object (optional, if already known)
+         */
+        function updatePremiumLoginUI(account = null) {
+            const currentAccount = account || msalInstance.getAllAccounts()[0]; // Get the first logged-in account
+
+            if (currentAccount) {
+                premiumLoginStatus.textContent = `Logged in as: ${currentAccount.username || currentAccount.name}`;
+                microsoftLoginButton.classList.add('hidden');
+                premiumLogoutButton.classList.remove('hidden');
+                console.log("Current logged-in account:", currentAccount);
+            } else {
+                premiumLoginStatus.textContent = 'Not logged in.';
+                microsoftLoginButton.classList.remove('hidden');
+                premiumLogoutButton.classList.add('hidden');
+                console.log("No account logged in.");
+            }
+        }
+
+        // Event listeners for Microsoft login/logout buttons
+        microsoftLoginButton.addEventListener('click', signIn);
+        premiumLogoutButton.addEventListener('click', signOut);
+
+        // --- Initial MSAL check on page load ---
+        // This is important to check if a user is already logged in from a previous session
+        msalInstance.handleRedirectPromise().then((response) => {
+            // This will be called after a redirect from login or token acquisition
+            if (response) {
+                console.log("Redirect response handled:", response);
+                updatePremiumLoginUI(response.account);
+            } else {
+                // If no redirect response, check for cached accounts
+                updatePremiumLoginUI();
+            }
+        }).catch((error) => {
+            console.error("Error handling redirect promise:", error);
+            premiumLoginStatus.textContent = `Authentication error: ${error.message}`;
+            updatePremiumLoginUI(); // Still try to update UI, might be no account
+        });
+
+
+        // --- Simulated Cracked Login Logic (remains unchanged) ---
+        const crackedUsernameInput = document.getElementById('cracked-username-input');
+        const crackedLoginButton = document.getElementById('cracked-login-button');
+        const crackedLogoutButton = document.getElementById('cracked-logout-button');
+        const crackedLoginStatus = document.getElementById('cracked-login-status');
+
+        let crackedLoggedIn = false;
+        let crackedLoggedInUsername = "";
+
+        function updateCrackedLoginUI() {
+            if (crackedLoggedIn) {
+                crackedLoginStatus.textContent = `Logged in as: ${crackedLoggedInUsername}`;
+                crackedUsernameInput.classList.add('hidden');
+                crackedLoginButton.classList.add('hidden');
+                crackedLogoutButton.classList.remove('hidden');
+            } else {
+                crackedLoginStatus.textContent = 'Not logged in.';
+                crackedUsernameInput.classList.remove('hidden');
+                crackedLoginButton.classList.remove('hidden');
+                crackedLogoutButton.classList.add('hidden');
+            }
+        }
+
+        crackedLoginButton.addEventListener('click', () => {
+            const username = crackedUsernameInput.value.trim();
+            if (username) {
+                crackedLoggedIn = true;
+                crackedLoggedInUsername = username;
+                updateCrackedLoginUI();
+            } else {
+                crackedLoginStatus.textContent = 'Please enter a username.';
+            }
+        });
+
+        crackedLogoutButton.addEventListener('click', () => {
+            crackedLoggedIn = false;
+            crackedLoggedInUsername = "";
+            crackedUsernameInput.value = ""; // Clear input on logout
+            updateCrackedLoginUI();
+        });
+
+        // Initialize cracked UI on page load
+        updateCrackedLoginUI();
     </script>
 </body>
+
 </html>
