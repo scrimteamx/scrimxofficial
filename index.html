@@ -23,8 +23,8 @@
             /* Darker gray for general text */
             --text-light: #475569;
             /* Lighter gray for subtle text */
-            --nav-bg: rgba(255, 255, 255, 0.8);
-            /* White translucent nav */
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            /* Slightly more opaque white translucent nav */
             --shadow-color: rgba(0, 0, 0, 0.1);
             /* Light shadow */
             --border-color: rgba(0, 188, 212, 0.2);
@@ -33,10 +33,10 @@
             /* Aqua */
             --gradient-end: #0097a7;
             /* Darker Aqua */
-            --footer-bg: #e0f7fa;
-            /* Light aqua for footer */
-            --footer-text: #475569;
-            /* Darker gray for footer text */
+            --footer-bg: #d0ece7;
+            /* Lighter aqua for footer for better contrast */
+            --footer-text: #2c3e50;
+            /* Darker text for footer for better contrast */
             --modal-bg: #ffffff;
             /* White modal */
             --modal-text: #1e293b;
@@ -57,8 +57,8 @@
             /* Lighter gray for general text */
             --text-light: #a0aec0;
             /* Even lighter gray for subtle text */
-            --nav-bg: rgba(26, 32, 44, 0.8);
-            /* Dark translucent nav */
+            --nav-bg: rgba(26, 32, 44, 0.95);
+            /* Slightly more opaque dark translucent nav */
             --shadow-color: rgba(0, 0, 0, 0.4);
             /* Darker shadow */
             --border-color: rgba(139, 92, 246, 0.2);
@@ -67,10 +67,10 @@
             /* Purple */
             --gradient-end: #ec4899;
             /* Pink */
-            --footer-bg: #1a202c;
-            /* Dark for footer */
-            --footer-text: #a0aec0;
-            /* Light gray for footer text */
+            --footer-bg: #2c3e50;
+            /* Darker background for footer for better contrast */
+            --footer-text: #ecf0f1;
+            /* Lighter text for footer for better contrast */
             --modal-bg: #2d3748;
             /* Dark modal */
             --modal-text: #e2e8f0;
@@ -371,7 +371,7 @@
                 <source src="mistbg.mp4" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
-            <div class="absolute inset-0 bg-black opacity-40"></div>
+            <div class="absolute inset-0 bg-black opacity-60"></div>
             <div class="relative z-10 text-center px-6 max-w-4xl mx-auto">
                 <h1 class="text-6xl md:text-8xl font-extrabold leading-tight gradient-text mb-6 animate-fade-in">
                     Soul Launcher
